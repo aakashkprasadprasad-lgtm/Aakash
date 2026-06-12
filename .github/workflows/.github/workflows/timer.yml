@@ -1,0 +1,33 @@
+name: Daily Weather Check
+
+on:
+  schedule:
+    # This tells GitHub to run the script every day at 7:00 AM UTC
+    - cron: '0 7 * * *'
+  # This adds a manual "Play" button so you can test it whenever you want
+  workflow_dispatch: 
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Copy repository files
+      uses: actions/checkout@v4
+
+    - name: Set up Python on GitHub's server
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install the requests library
+      run: pip install requests
+
+    - name: Run our weather bot script
+      env:
+        OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+        CITY_NAME: "YourCityName" # <-- Delete "YourCityName" and type your actual city inside the quotes!
+        SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+        SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
+        RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
+      run: python weather_bot.py
+      
